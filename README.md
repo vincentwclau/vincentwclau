@@ -2,7 +2,7 @@
  
 Let's start our journey.
 
-<img src="/developer.png" alt="developer" width="450"/>
+<img src="/developer.png" alt="developer" width="520"/>
 
 <!--
 **bitdevx/bitdevx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
