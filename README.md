@@ -1,7 +1,8 @@
 🌱 💬 Yes. I'm just a code passionist. Happy to sharing and learning by using github.
  
 Let's start our journey.
-<img src="/mac-dev.png" alt="mac-dev" width="500"/>
+
+<img src="/mac-dev.png" alt="mac-dev" width="900"/>
 
 <!--
 **bitdevx/bitdevx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
