@@ -1,4 +1,6 @@
-### Hi there 👋
+Yes. I'm just a code passionist. Happy to sharing and learning by using github.
+
+🌱 Let's start our journey.
 
 <!--
 **bitdevx/bitdevx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
