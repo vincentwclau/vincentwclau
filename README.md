@@ -1,8 +1,8 @@
-🌱 💬 Yes. I'm just a code passionist. Happy to sharing and learning by using github.
+🌱 💬 Yes. I'm just a code passionist, excited to share and learn by using github.
  
 Let's start our journey.
 
-<img src="/developer.png" alt="developer" width="600"/>
+<img src="/developer.png" alt="developer" width="450"/>
 
 <!--
 **bitdevx/bitdevx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
