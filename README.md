@@ -1,6 +1,6 @@
-- Learning **Java, Spring Boot, Go, Solidity, ReactJS, Angular**
-
-- 📫 Reach out: **vincentlau1006@gmail.com**
+<h3 align="left">Scope: Java, Spring Boot, Maven, Git, Docker, Kubernetes, JS</h3>
+<h3 align="left">Learning: Go, Solidity, ReactJS, Angular</h3>
+<h3 align="left">📫 Reach out: vincentlau1006@gmail.com</h3>
 <h3 align="left">Connect with me:</h3>
 <p align="left">
 <a href="https://www.leetcode.com/muecode" target="blank"><img align="center" src="https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/leetcode.svg" alt="muecode" height="30" width="40" /></a>
