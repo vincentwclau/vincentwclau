@@ -1,6 +1,5 @@
 <p align="left">Current: Java, Spring Boot, Maven, Git, Docker, Kubernetes, JS</p>
 <p align="left">Coming: Go, Solidity, ReactJS, Angular</p>
-<p align="left">Contact & Background:</p>
 <p align="left">Reach out: vincentlau1006@gmail.com</p>
 <p align="left">Linkedin: https://www.linkedin.com/in/vincent-lau-30435bb6/</p>
 <p align="left">LeetCode: https://www.leetcode.com/muecode</p>
