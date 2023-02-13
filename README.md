@@ -1,7 +1,8 @@
-<h3 align="left">Scope: Java, Spring Boot, Maven, Git, Docker, Kubernetes, JS</h3>
-<h3 align="left">Learning: Go, Solidity, ReactJS, Angular</h3>
-<h3 align="left">📫 Reach out: vincentlau1006@gmail.com</h3>
-<h3 align="left">Connect with me:</h3>
+<h3 align="left">scope: Java, Spring Boot, Maven, Git, Docker, Kubernetes, Ja</h3>
+<h3 align="left">learning: Go, Solidity, ReactJS, Angular</h3>
+<h3 align="left">reach out: vincentlau1006@gmail.com</h3>
+<h3 align="left">leetCode: https://www.leetcode.com/muecode</h3>
+<h3 align="left">linkedin: https://www.linkedin.com/in/vincent-lau-30435bb6/</h3>
 <p align="left">
 <a href="https://www.leetcode.com/muecode" target="blank"><img align="center" src="https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/leetcode.svg" alt="muecode" height="30" width="40" /></a>
 </p>
