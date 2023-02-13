@@ -1,5 +1,5 @@
 <h3 align="left">Direction:</h3>
-<h3 align="left">Scope: Java, Spring Boot, Maven, Git, Docker, Kubernetes, JS</h3>
+<p align="left">Scope: Java, Spring Boot, Maven, Git, Docker, Kubernetes, JS</p>
 <h3 align="left">Learning: Go, Solidity, ReactJS, Angular</h3>
 
 <h3 align="left">Contact & Background:</h3>
