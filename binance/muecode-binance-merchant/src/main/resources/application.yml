@@ -1,0 +1,8 @@
+server:
+  port: 8080
+
+binance-service:
+  api-key: gcishltw1qsbrplpfnmr5npw6isn6fmjrx4bjyx285fvjhnu9i78ic8tx5nv3rxs
+  api-secret: ncjtwb4vfmg5mt46fqzbfeww4yymxv2kot12kga64uqidadhn75gyzdu3pluau27
+  domain: https://bpay.binanceapi.com
+  #endpoint:
