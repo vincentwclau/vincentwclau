@@ -13,4 +13,4 @@
 <p align="left" ><img src="https://github-readme-stats.vercel.app/api/pin/?username=muecode&repo=muecode&show_owner=true&theme=onedark" /></p>
 <h3 align="left">Overall:</h3>
 <p align="left" > <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=muecode&show_icons=true&theme=onedark&layout=compact&langs_count=10" alt="muecode" /></p>
-<p align="center" > <img src="https://github-readme-stats.vercel.app/api?username=muecode&show_icons=true&theme=onedark" /></p>
+<p align="right" > <img src="https://github-readme-stats.vercel.app/api?username=muecode&show_icons=true&theme=onedark" /></p>
