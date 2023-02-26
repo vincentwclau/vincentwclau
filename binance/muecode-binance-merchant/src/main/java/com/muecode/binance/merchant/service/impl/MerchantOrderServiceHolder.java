@@ -33,10 +33,8 @@ import com.muecode.binance.merchant.model.OrderQueryResponse;
 import com.muecode.binance.merchant.model.dto.OrderHealthCheckDto;
 import com.muecode.binance.merchant.service.GeneralService;
 import com.muecode.binance.merchant.service.MerchantOrderService;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   private static final Queue<OrderQueryResponse> orderQueue = new ConcurrentLinkedQueue<>();
@@ -156,7 +154,7 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   @Override
   public void syncOrders() {
-    //log.info("here");
+    // log.info("here");
     OrderQueryResponse prevQueryResponse = orderQueue.poll();
     if (prevQueryResponse != null && !OrderStatus.EXPIRED.name()
         .equals(prevQueryResponse.getOrderQueryresult().getStatus())) {

@@ -29,11 +29,11 @@ public class CryptoServiceHolder implements CryptoService {
   @Override
   public CryptoExchangeRespDto quote(MueCurrency sellCurr, MueCurrency buyCurr) {
     // Invoke API to get exchange rate
-    CryptoExchangeResponse response = exchange(buyCurr, sellCurr);
+    CryptoExchangeResponse response = exchange(sellCurr, buyCurr);
     // Map Dto
     CryptoExchangeRespDto responseDto = CryptoExchangeRespDto.builder() //
-        .buyCurr(MueCurrency.valueOf(response.getBuyCurr())) //
-        .sellCurr(MueCurrency.valueOf(response.getSellCurr())) //
+        .buyCurr(response.getBuyCurr()) //
+        .sellCurr(response.getSellCurr()) //
         .price(response.getPrice()) //
         .quoteId(MueUUID.randomUUID().uuid()) //
         .build();

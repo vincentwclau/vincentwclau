@@ -17,7 +17,7 @@ public class CryptoExchangeResponse implements Serializable {
   @JsonProperty(value = "lprice")
   BigDecimal price;
   @JsonProperty(value = "curr1")
-  String buyCurr;
+  MueCurrency sellCurr;
   @JsonProperty(value = "curr2")
-  String sellCurr;
+  MueCurrency buyCurr;
 }

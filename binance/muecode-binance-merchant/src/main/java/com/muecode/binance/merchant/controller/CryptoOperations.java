@@ -17,28 +17,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequestMapping(value = "/default")
 public interface CryptoOperations {
   /**
-   * Query New Order Status. Long Polling by DeferredResult Implementation.
-   * http://localhost:8080/binance/merchant/api/v1/order/prepay-id/213687184409788416
+   * Quote Crypto Exchange Rate. i.e. Sell USDT, Buy USD.
    * 
-   * @param prepayId A Prepay ID identify the order created in Binance
-   * @param pollingTimeout long polling timeout parameter (in ms)
-   * @return Return DeferredResult<OrderQueryResponse> where there is updated order status
+   * @param sellCurr Sell Currency {@link} MueCurrency.
+   * @param buyCurr Buy Currency {@link} MueCurrency.
+   * @return MueResponse<CryptoExchangeRespDto> {@link} CryptoExchangeRespDto.
    */
-  @Operation(summary = "Long Polling Order Status by Prepay-ID. Return if order status changed.",
-      parameters = { //
-          @Parameter(name = "sellCurr", in = ParameterIn.PATH, description = "Sell Currency",
-              required = true), //
-          @Parameter(name = "buycurr", in = ParameterIn.PATH, description = "Buy Currency",
-              required = true) //
-      }, responses = { //
-          @ApiResponse(responseCode = "200",
-              content = @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = MueResponse.class))),
-          @ApiResponse(responseCode = "400", //
-              content = @Content(mediaType = "application/json", //
-                  schema = @Schema(implementation = MueResponse.class))), //
-      })
-  @GetMapping(value = "/quote/sell/{buycurr}/buy/{sellcurr}")
+  @Operation(summary = "Quote Crypto Exchange Rate. i.e. Sell USDT, Buy USD", parameters = { //
+      @Parameter(name = "sellcurr", in = ParameterIn.PATH, description = "Sell Currency",
+          required = true), //
+      @Parameter(name = "buycurr", in = ParameterIn.PATH, description = "Buy Currency",
+          required = true) //
+  }, responses = { //
+      @ApiResponse(responseCode = "200",
+          content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = MueResponse.class))),
+      @ApiResponse(responseCode = "400", //
+          content = @Content(mediaType = "application/json", //
+              schema = @Schema(implementation = MueResponse.class))), //
+  })
+  @GetMapping(value = "/quote/sell/{sellcurr}/buy/{buycurr}")
   public ResponseEntity<MueResponse<CryptoExchangeRespDto>> quote(
       @PathVariable(name = "sellcurr") MueCurrency sellCurr,
       @PathVariable(name = "buycurr") MueCurrency buyCurr //

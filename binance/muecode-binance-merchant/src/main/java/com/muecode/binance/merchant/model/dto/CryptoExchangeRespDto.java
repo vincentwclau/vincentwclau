@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CryptoExchangeRespDto implements Serializable {
-  MueCurrency buyCurr;
   MueCurrency sellCurr;
+  MueCurrency buyCurr;
   BigDecimal price;
   UUID quoteId;
 }
