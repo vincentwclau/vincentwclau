@@ -1,8 +1,57 @@
 server:
   port: 8080
+  
+binance-merchant:
+  api-key: 
+  api-secret: 
+  domain: https://bpay.binanceapi.com/binancepay/openapi
+  services:
+    create-order:  
+      version: v2
+      resource: order
+      default-expiry-ms: 60000
+      default-terminal: WEB
+      default-currency: USDT
+      default-support-pay-currency: USDT
+    query-order:
+      version: v2
+      resource: order/query
+      default-polling-timeout-ms: 60000
 
-binance-service:
-  api-key: gcishltw1qsbrplpfnmr5npw6isn6fmjrx4bjyx285fvjhnu9i78ic8tx5nv3rxs
-  api-secret: ncjtwb4vfmg5mt46fqzbfeww4yymxv2kot12kga64uqidadhn75gyzdu3pluau27
-  domain: https://bpay.binanceapi.com
-  #endpoint:
+crypto:
+  domain: https://cex.io
+  services:
+    exchange:
+      version: api
+      resource: last_price
+
+binance:
+  domain: https://data.binance.com
+  services:
+    server-time:
+      version: api/v3
+      resource: time
+
+scheduled:
+  query-order:
+    cron: 0/1 * * * * MON-SUN
+    timezone: GMT+8
+
+#這樣寫的話，原本內建的/actuator/xxx路徑，都會變成/manage/xxx，可以用來防止被其他人猜到
+management.endpoints.web.base-path: /metrics
+
+# 可以這樣寫，就會開啟所有endpoints(不包含shutdown)
+management.endpoints.web.exposure.include: "*"
+  # 也可以這樣寫，就只會開啟指定的endpoint，因此此處只會再額外開啟/actuator/beans和/actuator/mappings
+  # web.exposure.include: beans,mappings
+
+# now we can access more details from endpoint /metrics/health/readiness
+management.endpoint.health.group.readiness.show-details: always
+
+# exclude可以用來關閉某些endpoints
+# exclude通常會跟include一起用，就是先include了全部，然後再exclude /actuator/beans這個endpoint
+# management.endpoints.web.exposure.exclude=beans
+# management.endpoints.web.exposure.include=*
+
+# 如果要開啟/actuator/shutdown，要額外再加這一行
+# management.endpoint.shutdown.enabled=true

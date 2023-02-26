@@ -1,5 +1,6 @@
-package com.muecode.binance.merchant.response;
+package com.muecode.binance.merchant.model;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApiResponse<T> {
-  int code;
-  String message;
-  T data;
+public class ServerTimeResponse implements Serializable {
+  private long serverTime;
 }
