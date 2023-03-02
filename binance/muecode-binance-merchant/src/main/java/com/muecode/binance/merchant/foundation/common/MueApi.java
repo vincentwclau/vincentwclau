@@ -45,8 +45,7 @@ public final class MueApi {
         httpEntity = new HttpEntity<>(requestBody, httpHeaders);
       }
       // Make Request by exchange method
-      log.info("uri={}", uri);
-
+      // log.info("uri={}", uri);
       return restTemplate.exchange(uri, httpMethod, httpEntity, returnType);
     } catch (RestClientException e) {
       e.printStackTrace();

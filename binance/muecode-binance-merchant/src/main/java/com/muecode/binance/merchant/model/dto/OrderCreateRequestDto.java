@@ -3,8 +3,9 @@ package com.muecode.binance.merchant.model.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.muecode.binance.merchant.enums.OrderTerminalType;
 import com.muecode.binance.merchant.foundation.enums.MueCurrency;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +18,9 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderCreateRequestDto {
   /* Optional. Default WEB. Possible values: WEB, APP, etc. */
-  String terminalType;
+  OrderTerminalType terminalType;
   /* Required. */
-  @NotBlank
+  @NotNull
   BigDecimal orderAmount;
   /* Optional. Currently support USDT only. */
   MueCurrency currency;

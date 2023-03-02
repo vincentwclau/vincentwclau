@@ -2,6 +2,8 @@ package com.muecode.binance.merchant.service.impl;
 
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -18,6 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 import com.muecode.binance.merchant.enums.OrderStatus;
+import com.muecode.binance.merchant.enums.OrderTerminalType;
 import com.muecode.binance.merchant.foundation.common.MueApi;
 import com.muecode.binance.merchant.foundation.common.MueObjectMapper;
 import com.muecode.binance.merchant.foundation.common.MueUUID;
@@ -33,8 +36,10 @@ import com.muecode.binance.merchant.model.OrderQueryResponse;
 import com.muecode.binance.merchant.model.dto.OrderHealthCheckDto;
 import com.muecode.binance.merchant.service.GeneralService;
 import com.muecode.binance.merchant.service.MerchantOrderService;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   private static final Queue<OrderQueryResponse> orderQueue = new ConcurrentLinkedQueue<>();
@@ -92,13 +97,15 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
   }
 
   @Override
-  public OrderCreateResponse createOrder(String terminalType, BigDecimal orderAmount,
+  public OrderCreateResponse createOrder(OrderTerminalType terminalType, BigDecimal orderAmount,
       MueCurrency currency, List<MueCurrency> supportPayCurrency, long expireTime) {
     // Get an UUID, ignore hyphens
     String transUuid = MueUUID.randomUUID().toStringIgnoreHyphens();
 
     // Current Binance Server Time
     long binanceServerTime = generalService.getBinaceServerTime().getServerTime();
+    log.info("binance servertime={}", binanceServerTime);
+    log.info("current timestamp={}", Instant.now().getEpochSecond());
 
     // Compute the Comma Separated String
     String supportPayCurrencyCommaSeparated =
@@ -166,17 +173,17 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
       // Error handling
       if (newQueryResponse == null)
         throw MueRuetimeException.of(MueBizCode.REST_CLIENT_EXCEPTION);
+
+      // If status = expired, stop to query order from binance
+      // Otherwise, add it back to queue for next query
+      if (!OrderStatus.EXPIRED.name().equals(newQueryResponse.getOrderQueryresult().getStatus())) {
+        orderQueue.add(newQueryResponse);
+      }
       // Update orderChangeMap
       if (!newQueryResponse.getOrderQueryresult().getStatus()
           .equals(prevQueryResponse.getOrderQueryresult().getStatus())) {
         // update orderChangeMap
         orderChangeMap.put(prepayId, newQueryResponse);
-      }
-      // If status = expired, stop to query order from binance
-      // Otherwise, add it back to queue for next query
-      if (!OrderStatus.EXPIRED.name().equals(newQueryResponse.getOrderQueryresult().getStatus())) {
-        orderQueue.add(newQueryResponse);
-
       }
       // Check if deferredResultMap contain key (Some threads)
       if (orderChangeMap.containsKey(prepayId) && deferredResultMap.containsKey(prepayId)) {
@@ -214,6 +221,21 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
   private void queryOrderNAddToQueue(String prepayId) {
     OrderQueryResponse response = queryOrderFromBinance(prepayId);
     orderQueue.add(response);
+  }
+
+  public static void clearOrderFromMap() {
+    log.info("clearOrderFromMap");
+    List<String> removeIds = new ArrayList<>();
+    orderChangeMap.forEach((prepayId, order) -> {
+      log.info("loop orderChangeMap: ");
+      if (order.getOrderQueryresult().getCreateTime() + 3600000 < Instant.now().toEpochMilli()) {
+        log.info("exceed 2 mins: ");
+        removeIds.add(order.getOrderQueryresult().getPrepayId());
+      }
+    });
+    removeIds.stream().forEach(pid -> {
+      orderChangeMap.remove(pid);
+    });
   }
 
 }

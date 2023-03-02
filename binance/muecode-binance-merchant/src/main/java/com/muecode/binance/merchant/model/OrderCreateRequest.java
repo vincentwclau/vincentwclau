@@ -3,6 +3,7 @@ package com.muecode.binance.merchant.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.muecode.binance.merchant.enums.OrderTerminalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +40,7 @@ public class OrderCreateRequest implements Serializable {
   @Builder
   @Getter
   public static class Env implements Serializable {
-    private String terminalType; // WEB
+    private OrderTerminalType terminalType; // WEB
   }
 
 }

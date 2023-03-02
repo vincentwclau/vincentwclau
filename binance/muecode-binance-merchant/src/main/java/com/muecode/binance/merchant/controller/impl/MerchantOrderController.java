@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import com.muecode.binance.merchant.controller.MerchantOrderOperations;
+import com.muecode.binance.merchant.enums.OrderTerminalType;
 import com.muecode.binance.merchant.foundation.enums.MueBizCode;
 import com.muecode.binance.merchant.foundation.enums.MueCurrency;
 import com.muecode.binance.merchant.foundation.response.MueResponse;
@@ -49,8 +50,9 @@ public class MerchantOrderController implements MerchantOrderOperations {
   public ResponseEntity<MueResponse<OrderCreateResponse>> createOrder(
       OrderCreateRequestDto request) {
     // Handle Default Values for Terminal Type
-    String terminalTypeString =
-        request.getTerminalType() == null ? defaultTerminal : request.getTerminalType();
+    OrderTerminalType terminalType =
+        request.getTerminalType() == null ? OrderTerminalType.valueOf(defaultTerminal)
+            : request.getTerminalType();
     // Handle Default Values for Price Currency
     MueCurrency currencyEnum = request.getCurrency() == null ? MueCurrency.valueOf(defaultCurrency)
         : request.getCurrency();
@@ -62,7 +64,7 @@ public class MerchantOrderController implements MerchantOrderOperations {
     Long expireTimeLong =
         request.getExpireTime() == null ? defaultExpiryTime : request.getExpireTime();
     // Invoke createOrder service
-    OrderCreateResponse orderCreateResponse = merchantOrderService.createOrder(terminalTypeString,
+    OrderCreateResponse orderCreateResponse = merchantOrderService.createOrder(terminalType,
         request.getOrderAmount(), currencyEnum, supportPayCurrencyEnum, expireTimeLong);
     return MueResponse.responseEntity(HttpStatus.OK, MueBizCode.SUCCESS, orderCreateResponse);
   }

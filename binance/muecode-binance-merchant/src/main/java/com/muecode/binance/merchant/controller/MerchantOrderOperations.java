@@ -59,9 +59,14 @@ public interface MerchantOrderOperations {
   @Operation(summary = "Long Polling Order Status by Prepay-ID. Return if order status changed.",
       parameters = { //
           @Parameter(name = "prepayid", in = ParameterIn.PATH, description = "Prepay ID",
+              content = @Content(mediaType = "application/json", //
+                  schema = @Schema(example = "")),
               required = true), //
           @Parameter(name = "pollingTimeout", in = ParameterIn.QUERY,
-              description = "Polling Timeout(ms)", required = false) //
+              description = "Polling Timeout(ms)",
+              content = @Content(mediaType = "application/json", //
+                  schema = @Schema(example = "120000")),
+              required = false) //
       }, responses = { //
           @ApiResponse(responseCode = "200",
               content = @Content(mediaType = "application/json",

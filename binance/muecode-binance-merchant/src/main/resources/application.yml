@@ -2,8 +2,8 @@ server:
   port: 8080
   
 binance-merchant:
-  api-key: 
-  api-secret: 
+  api-key: yw4bbmikc1u2blxh7flchaed5o5irxchjddn3m1j6u9cpmrc78bfdgizngcyqw7o
+  api-secret: feg3pbrvlirpangecrk4zznhfjwfte2jqdjxoxppuvi6max2dyajoa80cyeth0pd
   domain: https://bpay.binanceapi.com/binancepay/openapi
   services:
     create-order:  
@@ -16,7 +16,7 @@ binance-merchant:
     query-order:
       version: v2
       resource: order/query
-      default-polling-timeout-ms: 60000
+      default-polling-timeout-ms: 70000
 
 crypto:
   domain: https://cex.io
@@ -35,6 +35,9 @@ binance:
 scheduled:
   query-order:
     cron: 0/1 * * * * MON-SUN
+    timezone: GMT+8
+  clear-order-from-map:
+    cron: 0 0/15 * * * MON-SUN
     timezone: GMT+8
 
 #這樣寫的話，原本內建的/actuator/xxx路徑，都會變成/manage/xxx，可以用來防止被其他人猜到
