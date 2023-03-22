@@ -3,12 +3,17 @@ pragma solidity ^0.8.19;
 
 contract TravelInsuranceFactory {
     address public manager; // our company's wallet address
-    address[] public deployedInsurances; // list of deployed insurance contracts
+    address[] private deployedInsurances; // list of deployed insurance contracts
     mapping(string => address[]) deployedInsuranceMap; // flight uid => insurance contract addresses, uid = flight number + '_' + departure time (e.g. SQ123_1678621644)
-    mapping(string => InsuranceTemplate) insuranceTemplates; // name => InsuranceTemplate
-    string[] public insuranceTemplateNames; // list of insurance template names
+    mapping(address => address[]) deployedInsuranceByInsuredAddress; // insured address => insurance contract addresses
+
+    // Templetes
+    uint256 lastTemplateId; // id of the last insurance template, starts from 0
+    mapping(uint256 => InsuranceTemplate) insuranceTemplateMap; // id => InsuranceTemplate
+    InsuranceTemplate[] insuranceTemplates; // list of insurance templates
 
     struct InsuranceTemplate {
+        uint256 id; // id of the insurance template
         string name; // name of the insurance template
         uint256 premium; // price of the insurance
         uint256 payoutAmount; // amount to be paid out to the purchaser once claimed
@@ -24,24 +29,26 @@ contract TravelInsuranceFactory {
         uint256 _payoutAmount
         ) public onlyManager {
 
+        uint256 newId = lastTemplateId++;
         InsuranceTemplate memory newTemplate = InsuranceTemplate({
+            id: newId, // id of the insurance template, starts from 0, auto increment
             name: _name,
             premium: _premium,
             payoutAmount: _payoutAmount
         });
-        insuranceTemplates[_name] = newTemplate;
-        insuranceTemplateNames.push(_name);
+        insuranceTemplateMap[newId] = newTemplate;
+        insuranceTemplates.push(newTemplate);
     }
 
-    function createTravelInsurance(
-        string memory _templateName,
+    function purchaseTravelInsurance(
+        uint256 _templateId,
         string memory _flightNumber, // flight number (e.g. SQ123)
         string memory _departureTime // unix timestamp (e.g. 1678621644)
         ) public payable {
         // create new contract
         // add to deployedInsurance
 
-        InsuranceTemplate memory template = insuranceTemplates[_templateName];
+        InsuranceTemplate memory template = insuranceTemplateMap[_templateId];
         require(template.premium > 0, "Template does not exist"); // template must exist
 
         require(msg.value == template.premium, "Insured must pay the premium");
@@ -49,6 +56,7 @@ contract TravelInsuranceFactory {
 
         //SQ123_1678621644
         TravelInsurance newInsurance = new TravelInsurance(
+            template.id,
             template.name,
             _flightNumber,
             _departureTime,
@@ -60,27 +68,29 @@ contract TravelInsuranceFactory {
         string memory flightUid = getFlightUid(_flightNumber, _departureTime);
         deployedInsurances.push(address(newInsurance));
         deployedInsuranceMap[flightUid].push(address(newInsurance));
+        deployedInsuranceByInsuredAddress[msg.sender].push(address(newInsurance));
     }
 
-    function getDeployedInsurances() public view returns (address[] memory) {
+    function getDeployedInsurances() public onlyManager view returns (address[] memory) {
         return deployedInsurances;
     }
 
-    function getInsuranceTemplateNames() public view returns (string[] memory) {
-        return insuranceTemplateNames;
+    function getDeployedInsurancesByFlight(string memory _flightNumber, string memory _departureTime) public view returns (address[] memory) {
+        string memory flightUid = getFlightUid(_flightNumber, _departureTime);
+        return deployedInsuranceMap[flightUid];
     }
 
-    function getInsuranceTemplate(string memory _name) public view returns (
-        string memory _templateName,
-        uint256 _premium,
-        uint256 _payoutAmount
-    ) {
-        InsuranceTemplate memory template = insuranceTemplates[_name];
-        return (
-            template.name,
-            template.premium,
-            template.payoutAmount
-        );
+    function getMyInsurances() public view returns (TravelInsurance.TravelInsuranceData[] memory) {
+        TravelInsurance.TravelInsuranceData[] memory myInsurances = new TravelInsurance.TravelInsuranceData[](deployedInsuranceByInsuredAddress[msg.sender].length);
+        for (uint256 i = 0; i < deployedInsuranceByInsuredAddress[msg.sender].length; i++) {
+            TravelInsurance.TravelInsuranceData memory insuranceData = TravelInsurance(deployedInsuranceByInsuredAddress[msg.sender][i]).getData();
+            myInsurances[i] = insuranceData;
+        }
+        return myInsurances;
+    }
+
+    function getInsuranceTemplates() public view returns (InsuranceTemplate[] memory) {
+        return insuranceTemplates;
     }
 
     modifier onlyManager() {
@@ -98,17 +108,24 @@ contract TravelInsuranceFactory {
 
 
 contract TravelInsurance {
-    string public templateName; // name of the insurance template
-    string public flightNumber; // flight number (e.g. SQ123)
-    string public departureTime; // unix timestamp (e.g. 1678621644)
-    address public insurer; // our company's wallet address
-    address public insured; // the person who buys the insurance
-    uint256 public premium; // price of the insurance
-    uint256 public payoutAmount; // amount to be paid out to the purchaser once claimed
-    bool public isActive; // whether the insurance is active
-    bool public isPaidOut; // whether the insurance has been paid out
+
+    TravelInsuranceData public data;
+
+    struct TravelInsuranceData {
+        uint256 templateId; // id of the insurance template
+        string templateName; // name of the insurance template
+        string flightNumber; // flight number (e.g. SQ123)
+        string departureTime; // unix timestamp (e.g. 1678621644)
+        address insurer; // our company's wallet address
+        address insured; // the person who buys the insurance
+        uint256 premium; // price of the insurance
+        uint256 payoutAmount; // amount to be paid out to the purchaser once claimed
+        bool isActive; // whether the insurance is active
+        bool isPaidOut; // whether the insurance has been paid out
+    }
 
     constructor(
+        uint256 _templateId,
         string memory _templateName,
         string memory _flightNumber, // flight number (e.g. SQ123)
         string memory _departureTime, // unix timestamp (e.g. 1678621644)
@@ -117,15 +134,16 @@ contract TravelInsurance {
         uint256 _premium,
         uint256 _payoutAmount
         ) {
-        templateName = _templateName;
-        flightNumber = _flightNumber;
-        departureTime = _departureTime;
-        insurer = _insurer;
-        insured = _insured;
-        premium = _premium;
-        payoutAmount = _payoutAmount;
-        isActive = true;
-        isPaidOut = false;
+        data.templateId = _templateId;
+        data.templateName = _templateName;
+        data.flightNumber = _flightNumber;
+        data.departureTime = _departureTime;
+        data.insurer = _insurer;
+        data.insured = _insured;
+        data.premium = _premium;
+        data.payoutAmount = _payoutAmount;
+        data.isActive = true;
+        data.isPaidOut = false;
     }
 
     // function payPremium() public payable {
@@ -134,38 +152,26 @@ contract TravelInsurance {
     // }
 
     function cancelInsurance() public onlyInsurer payable {
-        payable(insured).transfer(premium); // refund the premium to the insured
-        isActive = false;
+        payable(data.insured).transfer(data.premium); // refund the premium to the insured
+        data.isActive = false;
     }
 
     function claimInsurance() public onlyInsurer payable {
-        require(isActive); // can only claim when the insurance is active
-        require(!isPaidOut); // can only claim once
+        require(data.isActive); // can only claim when the insurance is active
+        require(!data.isPaidOut); // can only claim once
 
-        payable(insured).transfer(payoutAmount);
-        isPaidOut = true;
+        payable(data.insured).transfer(data.payoutAmount);
+        data.isPaidOut = true;
     }
 
     modifier onlyInsurer() {
-        require(msg.sender == insurer);
+        require(msg.sender == data.insurer);
         _;
     }
 
-    function getDetails() public view returns (
-        address _insurer,
-        address _insured,
-        uint256 _premium,
-        uint256 _payoutAmount,
-        bool _isActive,
-        bool _isPaidOut
+    function getData() public view returns (
+        TravelInsuranceData memory
     ) {
-        return (
-            insurer,
-            insured,
-            premium,
-            payoutAmount,
-            isActive,
-            isPaidOut
-        );
+        return data;
     }
 }
