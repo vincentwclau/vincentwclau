@@ -10,12 +10,6 @@ import com.muecode.insurance.smartcontract.travel.foundation.common.MueObjectMap
 @Configuration
 public class AppConfig {
 
-  // @Value("${binance-merchant.api-key}")
-  // String apiKey;
-
-  // @Value("${binance-merchant.api-secret}")
-  // String apiSecret;
-
   @Bean
   public ObjectMapper objectMapper() {
     return new ObjectMapper();
@@ -30,10 +24,5 @@ public class AppConfig {
   public MueApi getMueApi(RestTemplate restTemplate) {
     return new MueApi(restTemplate);
   }
-
-  // @Bean
-  // public MueBinanceMerchant getMueBinanceMerchant() {
-  // return new MueBinanceMerchant(apiKey, apiSecret);
-  // }
 
 }
