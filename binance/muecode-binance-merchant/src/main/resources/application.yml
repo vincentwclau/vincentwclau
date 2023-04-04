@@ -2,8 +2,8 @@ server:
   port: 8080
   
 binance-merchant:
-  api-key: yw4bbmikc1u2blxh7flchaed5o5irxchjddn3m1j6u9cpmrc78bfdgizngcyqw7o
-  api-secret: feg3pbrvlirpangecrk4zznhfjwfte2jqdjxoxppuvi6max2dyajoa80cyeth0pd
+  api-key: adfg3rqbrw4mkwxatybp16ps9fimcfs5pdzdf5euklydal5fjiuhnw3pca18neiu
+  api-secret: onylfq4jcogbyjps9lkhfea48fdmfb9qfxe7xxnw7zrvrsdmg7n6hegvyuscj2ba
   domain: https://bpay.binanceapi.com/binancepay/openapi
   services:
     create-order:  
@@ -33,12 +33,14 @@ binance:
       resource: time
 
 scheduled:
+  timezone: GMT+8
   query-order:
-    cron: 0/1 * * * * MON-SUN
+    cron: 0/2 * * * * MON-SUN
     timezone: GMT+8
   clear-order-from-map:
-    cron: 0 0/15 * * * MON-SUN
-    timezone: GMT+8
+    cron: 0 0 0/12 * * MON-SUN
+  app-restart:
+    cron: 0 0 0/1 * * MON-SUN
 
 #這樣寫的話，原本內建的/actuator/xxx路徑，都會變成/manage/xxx，可以用來防止被其他人猜到
 management.endpoints.web.base-path: /metrics

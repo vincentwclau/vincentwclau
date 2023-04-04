@@ -83,6 +83,7 @@ public class MerchantOrderController implements MerchantOrderOperations {
 
     deferredResult.onCompletion(() -> {
       log.info("Long Polling Order Completed.");
+      MerchantOrderServiceHolder.removeDeferredResultMap(prepayId);
     });
 
     deferredResult.onTimeout(() -> {
@@ -90,10 +91,11 @@ public class MerchantOrderController implements MerchantOrderOperations {
       log.info("Long Polling Order Timeout");
       String timeoutDesc = "Long Polling Timeout in " + defaultPollingTimeout / 1000L
           + " seconds. You may try again.";
-
       ResponseEntity<MueResponse<OrderQueryResponse>> deferredResponse = MueResponse.responseEntity(
           HttpStatus.REQUEST_TIMEOUT, MueBizCode.LONG_POLLING_TIMEOUT, null, timeoutDesc);
       deferredResult.setResult(deferredResponse);
+      log.info("Long Polling Order onTimeout, removeDeferredResultMap");
+      MerchantOrderServiceHolder.removeDeferredResultMap(prepayId);
     });
 
     MerchantOrderServiceHolder.putDeferredResultMap(prepayId, deferredResult);

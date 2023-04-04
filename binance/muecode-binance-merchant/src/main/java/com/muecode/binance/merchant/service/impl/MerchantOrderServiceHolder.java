@@ -4,11 +4,13 @@ package com.muecode.binance.merchant.service.impl;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +46,7 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   private static final Queue<OrderQueryResponse> orderQueue = new ConcurrentLinkedQueue<>();
 
-  private static final Map<String, OrderQueryResponse> orderChangeMap = new ConcurrentHashMap<>();
+  private static Map<String, OrderQueryResponse> orderChangeMap = new ConcurrentHashMap<>();
 
   private static final Map<String, DeferredResult<ResponseEntity<MueResponse<OrderQueryResponse>>>> deferredResultMap =
       new ConcurrentHashMap<>();
@@ -80,12 +82,17 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
     return OrderHealthCheckDto.builder() //
         .orderQueue(orderQueue) //
         .orderChangeMap(orderChangeMap) //
+        .deferedResultMap(deferredResultMap) //
         .build();
   }
 
   public static void putDeferredResultMap(String prepayId,
       DeferredResult<ResponseEntity<MueResponse<OrderQueryResponse>>> deferredResult) {
     deferredResultMap.put(prepayId, deferredResult);
+  }
+
+  public static void removeDeferredResultMap(String prepayId) {
+    deferredResultMap.remove(prepayId);
   }
 
   public static OrderQueryResponse getOrderQueryResponse(String prepayId) {
@@ -153,7 +160,14 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
         && "000000".equals(orderCreateResponse.getCode())) {
       // Async method to add queue
       queryOrderNAddToQueue(orderCreateResponse.getOrderQrCodeResult().getPrepayId());
-
+      // Improvement for GC
+      headers = null;
+      requestJsonString = null;
+      request = null;
+      goods = null;
+      env = null;
+      supportPayCurrencyCommaSeparated = null;
+      transUuid = null;
       return orderCreateResponse;
     }
     throw MueRuetimeException.of(MueBizCode.REST_CLIENT_EXCEPTION);
@@ -161,12 +175,13 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   @Override
   public void syncOrders() {
-    // log.info("here");
-    OrderQueryResponse prevQueryResponse = orderQueue.poll();
-    if (prevQueryResponse != null && !OrderStatus.EXPIRED.name()
-        .equals(prevQueryResponse.getOrderQueryresult().getStatus())) {
 
+    OrderQueryResponse prevQueryResponse = orderQueue.poll();
+    if (prevQueryResponse != null //
+    // && !OrderStatus.EXPIRED.name().equals(prevQueryResponse.getOrderQueryresult().getStatus()) //
+    ) {
       String prepayId = prevQueryResponse.getOrderQueryresult().getPrepayId();
+      log.info("syncOrder, prepayId={}", prepayId);
       // log.info("Queue is with data, prepayId={}", prepayId);
       // Sync Order from Binance
       OrderQueryResponse newQueryResponse = queryOrderFromBinance(prepayId);
@@ -176,7 +191,9 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
 
       // If status = expired, stop to query order from binance
       // Otherwise, add it back to queue for next query
-      if (!OrderStatus.EXPIRED.name().equals(newQueryResponse.getOrderQueryresult().getStatus())) {
+      if (OrderStatus.INITIAL.name().equals(newQueryResponse.getOrderQueryresult().getStatus()) //
+          || OrderStatus.PENDING.name().equals(newQueryResponse.getOrderQueryresult().getStatus()) //
+      ) {
         orderQueue.add(newQueryResponse);
       }
       // Update orderChangeMap
@@ -193,8 +210,16 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
         ResponseEntity<MueResponse<OrderQueryResponse>> deferredResult =
             MueResponse.responseEntity(HttpStatus.OK, MueBizCode.SUCCESS, returnRepsonse);
         deferredResultMap.get(prepayId).setResult(deferredResult);
+        // Improvement for GC
+        returnRepsonse = null;
+        deferredResult = null;
       }
+      // Improvement for GC
+      newQueryResponse = null;
+      prepayId = null;
     }
+    // Improvement for GC
+    prevQueryResponse = null;
   }
 
   private OrderQueryResponse queryOrderFromBinance(String prepayId) {
@@ -209,6 +234,9 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
     // Compute the Http Headers for order request
     HttpHeaders headers =
         mueBinanceMerchant.computeHttpHeader(transUuid, binanceServerTime, requestJsonString);
+    // Improvement for GC
+    transUuid = null;
+    requestJsonString = null;
     // Invoke Binanace API
     return mueApi.exchange(HttpMethod.POST, //
         binanceMerchantDomain, queryOrderServiceVersion, //
@@ -219,23 +247,16 @@ public class MerchantOrderServiceHolder implements MerchantOrderService {
 
   @Async
   private void queryOrderNAddToQueue(String prepayId) {
-    OrderQueryResponse response = queryOrderFromBinance(prepayId);
-    orderQueue.add(response);
+    orderQueue.add(queryOrderFromBinance(prepayId));
   }
 
   public static void clearOrderFromMap() {
     log.info("clearOrderFromMap");
-    List<String> removeIds = new ArrayList<>();
-    orderChangeMap.forEach((prepayId, order) -> {
-      log.info("loop orderChangeMap: ");
-      if (order.getOrderQueryresult().getCreateTime() + 3600000 < Instant.now().toEpochMilli()) {
-        log.info("exceed 2 mins: ");
-        removeIds.add(order.getOrderQueryresult().getPrepayId());
-      }
-    });
-    removeIds.stream().forEach(pid -> {
-      orderChangeMap.remove(pid);
-    });
+    orderChangeMap = orderChangeMap.entrySet().stream() //
+        // Filter exist more than 2 mins
+        .filter(entry -> entry.getValue().getOrderQueryresult() //
+            .getCreateTime() + 120000L >= Instant.now().toEpochMilli())
+        .collect(Collectors.toConcurrentMap(entry -> entry.getKey(), entry -> entry.getValue()));
   }
 
 }

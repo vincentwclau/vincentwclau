@@ -11,7 +11,6 @@ import com.muecode.insurance.smartcontract.travel.foundation.exception.MueBusine
 import com.muecode.insurance.smartcontract.travel.foundation.exception.MueRuetimeException;
 import com.muecode.insurance.smartcontract.travel.foundation.response.MueResponse;
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

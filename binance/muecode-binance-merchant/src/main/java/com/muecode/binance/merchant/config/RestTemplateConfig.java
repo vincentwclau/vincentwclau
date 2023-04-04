@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateConfig {
 
   // max no. of connections
-  @Value("${rest.conn-mgr.connection.max-total:100}")
+  @Value("${rest.conn-mgr.connection.max-total:20}")
   int maxTotal;
   // max no. of connections per route
   @Value("${rest.conn-mgr.connection.max-per-route:200}")
