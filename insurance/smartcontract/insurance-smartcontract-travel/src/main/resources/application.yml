@@ -2,13 +2,13 @@ server:
   port: 8081
 
 ethereum:
-  node-url: 'https://eth-sepolia.g.alchemy.com/v2/9xS3j0rOP6-Tw1irmklmuidJa8x8RrLe'
+  node-url: 'https://eth-sepolia.g.alchemy.com/v2/9xS3j0rOP6-Tw1irmklmuidJaxxxxxx'
   credentials:
-    # private-key: 'd069bb96cf48492d312930ad647b747ad5cc601665839a53d2f08b9834b3ce44'
-    private-key: '83b19c39b9c9b6779b16694e9b42705b4bdf604a140cb31a27c1a4f4c5784cba'
+    # private-key: 'd069bb96cf48492d312930ad647b747ad5cc601665839a53d2f08b9834xxxxxx'
+    private-key: '83b19c39b9c9b6779b16694e9b42705b4bdf604a140cb31a27c1a4f4c5xxxxxx'
   contract:
-    # address: '0xf6f3C3E21194921A77a79ADA96B09c93a61975eD'
-    address: '0x27402B3Cc137FF5DAb6F5f7cD18ea1b2C739ACCD'
+    # address: '0xf6f3C3E21194921A77a79ADA96B09c93a6xxxxxx'
+    address: '0x27402B3Cc137FF5DAb6F5f7cD18ea1b2C7xxxxxx'
     gas-price: 40
     gas-limit: 3000000
 
