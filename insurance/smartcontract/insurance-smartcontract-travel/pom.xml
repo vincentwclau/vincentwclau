@@ -146,6 +146,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.web3j</groupId>
 				<artifactId>web3j-maven-plugin</artifactId>
@@ -153,8 +154,7 @@
 				<!--
 				web3j-maven-plugin version 4.9.4 has depenedency web3j-sok 0.2.1
 				It has bug in release.json for downloading solc (solc is for compile sol)
-			  -->
-				<!--
+			  
 				Fix: Changed the dependency to version to 0.2.3
 				,which support sol version up to 0.8.17.
 				For newer version sol, need to check if there is new version of web3j-sokt in the future.
@@ -167,6 +167,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+		
 		</plugins>
 	</build>
 
