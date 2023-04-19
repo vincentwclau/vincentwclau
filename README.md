@@ -14,5 +14,4 @@
 
 <p align="left"><img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=muecode&theme=onedark&layout=compact&langs_count=10" alt="muecode" /></p>
 <p align="left"><img src="https://github-readme-stats-sigma-five.vercel.app/api?username=muecode&theme=onedark" /></p>
-<h3 align="left">Repositories</h3>
 <p align="left" ><img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=muecode&repo=muecode&show_owner=true&theme=onedark" /></p>
