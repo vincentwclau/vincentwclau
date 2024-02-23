@@ -2,7 +2,7 @@
 <p align="left">Coming: Go, Solidity, ReactJS, Angular </p>
 <p align="left">Reach out: vincentlau1006@gmail.com</p>
 <p align="left">Linkedin: https://www.linkedin.com/in/vincentlau-hk/</p>
-<p align="left">LeetCode: https://www.leetcode.com/javahongkong</p>
+<p align="left">LeetCode: https://www.leetcode.com/vincentlau-hk/</p>
 
 <p align="left"><img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=vincentlau-hk&theme=onedark&layout=compact&langs_count=10" alt="vincentlau-hk" /></p>
 <p align="left"><img src="https://github-readme-stats-sigma-five.vercel.app/api?username=vincentlau-hk&theme=onedark" /></p>
